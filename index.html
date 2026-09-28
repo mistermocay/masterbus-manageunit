@@ -312,6 +312,7 @@ let units = [];
 let files = []; // foto yang dipilih di form
 let editingUnitId = null;
 let editingUnit = null;
+let editingPhotos = [];
 const $ = (id) => document.getElementById(id);
 function showUploadLoading(current, total) {
   $("uploadLoadingTitle").textContent =
@@ -406,11 +407,26 @@ function closeAll() {
 
 /* ============ Form laporan ============ */
 function renderPreviews() {
-  $("previews").innerHTML = files.map((f, i) => `<div class="pv"><img src="${URL.createObjectURL(f)}" alt="Preview ${i + 1}"><button data-rm="${i}" aria-label="Hapus foto">×</button></div>`).join("");
+  const oldPhotos = editingPhotos.map((url, i) => `
+    <div class="pv">
+      <img src="${esc(url)}" alt="Foto lama ${i + 1}">
+      <button data-rm-existing="${i}" aria-label="Hapus foto lama">×</button>
+    </div>
+  `).join("");
+
+  const newPhotos = files.map((f, i) => `
+    <div class="pv">
+      <img src="${URL.createObjectURL(f)}" alt="Foto baru ${i + 1}">
+      <button data-rm="${i}" aria-label="Hapus foto baru">×</button>
+    </div>
+  `).join("");
+
+  $("previews").innerHTML = oldPhotos + newPhotos;
 }
 function openModal() {
   editingUnitId = null;
   editingUnit = null;
+  editingPhotos = [];
   ["fNB", "fRangka", "fMesin", "fCust", "fPenginput", "fFoto"].forEach((id) => ($(id).value = ""));
   $("fStat").value = "Proses";
   $("mTitle").textContent = "Buat Laporan Unit Keluar";
@@ -424,20 +440,19 @@ function openModal() {
 function openEditModal(unit) {
   editingUnitId = unit.id;
   editingUnit = unit;
-
   $("fNB").value = unit.nomorNB || "";
   $("fRangka").value = unit.nomorRangka || "";
   $("fMesin").value = unit.nomorMesin || "";
   $("fCust").value = unit.namaCustomer || "";
   $("fPenginput").value = unit.dibuatOleh || "";
   $("fStat").value = unit.status || "Proses";
-
+  // Simpan daftar foto lama yang masih terhubung dengan laporan
+  editingPhotos = [...(unit.foto || [])];
+  // Foto baru yang belum di-upload
   files = [];
   renderPreviews();
-
   $("mTitle").textContent = "Edit Laporan Unit Keluar";
   $("mSave").textContent = "Simpan Perubahan";
-
   $("modal").classList.add("open");
   $("overlay").classList.add("open");
   $("fNB").focus();
@@ -449,7 +464,23 @@ const addSelectedFiles = (e) => {
 };
 $("fFoto").onchange = addSelectedFiles;
 $("fKamera").onchange = addSelectedFiles;
-$("previews").onclick = (e) => { const i = e.target.dataset.rm; if (i !== undefined) { files.splice(i, 1); renderPreviews(); } };
+$("previews").onclick = (e) => {
+  const newIndex = e.target.dataset.rm;
+  const oldIndex = e.target.dataset.rmExisting;
+  // Hapus foto baru yang belum di-upload
+  if (newIndex !== undefined) {
+    files.splice(Number(newIndex), 1);
+    renderPreviews();
+    return;
+  }
+  // Hapus foto lama yang sudah tersimpan
+  if (oldIndex !== undefined) {
+    const index = Number(oldIndex);
+    if (!confirm("Hapus foto ini dari laporan?")) return;
+    editingPhotos.splice(index, 1);
+    renderPreviews();
+  }
+};
 
 $("mSave").onclick = async () => {
   const nb = $("fNB").value.trim().toUpperCase();
@@ -482,7 +513,7 @@ $("mSave").onclick = async () => {
   }
 
   try {
-    let foto = editingUnit ? [...(editingUnit.foto || [])] : [];
+    let foto = editingUnit ? [...editingPhotos] : [];
 
     // Upload foto baru jika user menambahkan foto
     if (files.length > 0) {
