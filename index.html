@@ -80,7 +80,51 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 .photo-btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:#f8fafc;color:var(--navy);font-size:13px;font-weight:650;cursor:pointer}
 .photo-btn:hover{background:var(--blue-soft)}
 .actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;z-index:50;display:none;font-size:13px;max-width:92%}.close{float:right;border:0;background:none;font-size:22px;color:var(--muted)}
-
+.upload-loading{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(7,26,53,.72);
+  backdrop-filter:blur(7px);
+  cursor:wait;
+}
+.upload-loading.open{
+  display:flex;
+}
+.upload-loading-box{
+  width:min(390px,88%);
+  background:#fff;
+  border-radius:18px;
+  padding:30px 24px;
+  text-align:center;
+  box-shadow:0 25px 70px rgba(0,0,0,.3);
+}
+.upload-spinner{
+  width:42px;
+  height:42px;
+  margin:0 auto 18px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:uploadSpin .8s linear infinite;
+}
+.upload-loading-title{
+  color:var(--navy);
+  font-size:16px;
+  font-weight:750;
+}
+.upload-loading-text{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+  margin-top:7px;
+}
+@keyframes uploadSpin{
+  to{transform:rotate(360deg)}
+}
 /* RESPONSIVE */
 @media(max-width:900px){.sidebar{width:220px}main{padding:22px}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){
@@ -144,7 +188,13 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 </main>
 
 <div class="overlay" id="overlay"></div>
-
+<div class="upload-loading" id="uploadLoading">
+  <div class="upload-loading-box">
+    <div class="upload-spinner"></div>
+    <div class="upload-loading-title" id="uploadLoadingTitle">Mengupload foto…</div>
+    <div class="upload-loading-text" id="uploadLoadingText">Mohon tunggu, jangan tutup halaman.</div>
+  </div>
+</div>
 <aside class="drawer" id="drawer" aria-label="Detail unit"></aside>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
@@ -201,24 +251,79 @@ async function uploadToVGY(file) {
 
   const data = await response.json();
 
+  console.log("Respons VGY:", data);
+
   if (data.error === true) {
     throw new Error(data.errorMsg || "VGY menolak upload foto.");
   }
 
-  const url = data.URL || data.url || data.imageUrl || data.image;
+  /*
+   * VGY dapat mengembalikan:
+   * - URL  = URL halaman/viewer
+   * - Image = nama/file image
+   * - Extension = ekstensi image
+   *
+   * Website kita membutuhkan DIRECT IMAGE URL:
+   * https://i.vgy.me/nama-file.png
+   */
 
-  if (!url) {
-    console.error("Respons VGY:", data);
-    throw new Error("VGY tidak mengembalikan URL foto.");
+  let imageUrl = "";
+
+  if (data.Image) {
+    if (String(data.Image).startsWith("http")) {
+      imageUrl = data.Image;
+    } else {
+      const extension = data.Extension ? `.${data.Extension}` : "";
+      imageUrl = `https://i.vgy.me/${data.Image}${extension}`;
+    }
   }
 
-  return url;
+  if (!imageUrl && data.image) {
+    if (String(data.image).startsWith("http")) {
+      imageUrl = data.image;
+    } else {
+      const extension = data.Extension ? `.${data.Extension}` : "";
+      imageUrl = `https://i.vgy.me/${data.image}${extension}`;
+    }
+  }
+
+  if (!imageUrl && data.imageUrl) {
+    imageUrl = data.imageUrl;
+  }
+
+  if (!imageUrl && data.URL && String(data.URL).includes("i.vgy.me")) {
+    imageUrl = data.URL;
+  }
+
+  if (!imageUrl && data.url && String(data.url).includes("i.vgy.me")) {
+    imageUrl = data.url;
+  }
+
+  if (!imageUrl) {
+    console.error("Respons VGY tidak memiliki direct image URL:", data);
+    throw new Error("VGY berhasil upload tetapi direct URL gambar tidak ditemukan.");
+  }
+
+  return imageUrl;
 }
 
 /* ============ State & helper ============ */
 let units = [];
 let files = []; // foto yang dipilih di form
 const $ = (id) => document.getElementById(id);
+function showUploadLoading(current, total) {
+  $("uploadLoadingTitle").textContent =
+    total > 1 ? `Mengupload foto ${current}/${total}…` : "Mengupload foto…";
+
+  $("uploadLoadingText").textContent =
+    "Foto sedang dikirim ke ke image hosting. Mohon tunggu dan jangan tutup halaman.";
+
+  $("uploadLoading").classList.add("open");
+}
+
+function hideUploadLoading() {
+  $("uploadLoading").classList.remove("open");
+}
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtDate = (d) => new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 const statClass = (s) => (s === "Perlu Tindak Lanjut" ? "Perlu" : s);
@@ -312,11 +417,13 @@ $("mSave").onclick = async () => {
 const nb = $("fNB").value.trim().toUpperCase(), cust = $("fCust").value.trim(), penginput = $("fPenginput").value.trim();
 if (!nb || !cust || !penginput) return toast("Nomor NB, Nama Customer, dan Nama Penginput wajib diisi.");
   if (units.some((u) => u.nomorNB === nb)) return toast("Nomor NB " + nb + " sudah ada.");
-  $("mSave").disabled = true; $("mSave").textContent = "Menyimpan…";
+  $("mSave").disabled = true;
+  $("mSave").textContent = "Menyimpan…";
+  showUploadLoading(0, files.length);
   try {
     const urls = [];
     for (let i = 0; i < files.length; i++) {
-      $("mSave").textContent = `Upload foto ${i + 1}/${files.length}…`;
+      showUploadLoading(i + 1, files.length);
       const url = await uploadToVGY(files[i]);
       if (url) {
         urls.push(url);
@@ -330,8 +437,14 @@ if (!nb || !cust || !penginput) return toast("Nomor NB, Nama Customer, dan Nama 
     unit.id = await saveUnit(unit);
     units.unshift(unit); render(); closeAll();
     toast(files.length && !urls.length ? "Laporan tersimpan, tetapi foto belum terupload (VGY belum diintegrasikan)." : "Laporan tersimpan.");
-  } catch (err) { console.error(err); toast("Gagal menyimpan: " + err.message); }
-  $("mSave").disabled = false; $("mSave").textContent = "Simpan";
+  } catch (err) {
+  console.error(err);
+  toast("Gagal menyimpan: " + err.message);
+  } finally {
+    hideUploadLoading();
+    $("mSave").disabled = false;
+    $("mSave").textContent = "Simpan";
+  }
 };
 
 /* ============ Navigasi ============ */
@@ -347,7 +460,7 @@ document.addEventListener("keydown", (e) => e.key === "Escape" && closeAll());
 ["search", "fYear", "fStatus"].forEach((id) => $(id).addEventListener("input", render));
 document.addEventListener("click", (e) => { const el = e.target.closest("[data-nb]"); if (el) openDetail(el.dataset.nb); });
 
-$("settingInfo").innerHTML = `<b>Database:</b> ${isFirebaseReady ? "Firebase Firestore (terhubung)" : "Mode demo — isi <code>firebaseConfig</code> di database.js untuk memakai Firestore"}<br><b>Upload foto:</b> fungsi <code>uploadToVGY()</code> di index.html masih placeholder.`;
+$("settingInfo").innerHTML = `<b>Database:</b> ${isFirebaseReady ? "Firebase Firestore (terhubung)" : "Mode demo — isi <code>firebaseConfig</code> di database.js untuk memakai Firestore"}<br><b>Upload foto:</b> VGY aktif dan digunakan untuk menyimpan foto unit.`;
 
 /* ============ Start ============ */
 (async () => {
