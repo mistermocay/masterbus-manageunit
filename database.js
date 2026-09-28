@@ -2,12 +2,12 @@
 // Jika config di bawah belum diisi, aplikasi memakai data dummy (tersimpan di memori saja).
 
 const firebaseConfig = {
-  apiKey: "ISI_API_KEY",
-  authDomain: "ISI_PROJECT_ID.firebaseapp.com",
-  projectId: "ISI_PROJECT_ID",
-  storageBucket: "ISI_PROJECT_ID.appspot.com",
-  messagingSenderId: "ISI_SENDER_ID",
-  appId: "ISI_APP_ID",
+  apiKey: "AIzaSyCwbGY7ujKxK0fJg7hFCtatPhrGajSy7t4",
+  authDomain: "masterbus-manageunit.firebaseapp.com",
+  projectId: "masterbus-manageunit",
+  storageBucket: "masterbus-manageunit.firebasestorage.app",
+  messagingSenderId: "801693643274",
+  appId: "1:801693643274:web:3cec7e9f354cf49e5325f3",
 };
 
 const COLLECTION = "unitKeluar";
