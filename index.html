@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokumentasi Unit Keluar – PT Master Artha Kharisma</title>
+<style>
+:root{--navy:#0b1f3f;--navy2:#13305e;--blue:#2563eb;--blue-soft:#e8f0ff;--bg:#f3f6fb;--white:#fff;--text:#14213d;--muted:#6b7a90;--line:#e2e8f2;--green:#16a34a;--amber:#d97706;--red:#dc2626;--shadow:0 4px 18px rgba(11,31,63,.08)}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+/* Sidebar */
+.sidebar{width:250px;background:var(--navy);color:#fff;padding:22px 14px;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand{padding:4px 10px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:16px}
+.brand b{display:block;font-size:15px}.brand small{color:#9db3d6;font-size:12px}
+.nav button{display:flex;gap:10px;width:100%;padding:11px 12px;margin-bottom:4px;border:0;border-radius:10px;background:none;color:#c8d6ee;text-align:left}
+.nav button:hover{background:var(--navy2)}
+.nav button.active{background:var(--blue);color:#fff}
+/* Main */
+main{flex:1;padding:28px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:26px;color:var(--navy)}
+.sub{color:var(--muted);font-size:14px;margin-top:2px}
+.btn{background:var(--blue);color:#fff;border:0;padding:11px 18px;border-radius:10px;font-weight:600;box-shadow:var(--shadow)}
+.btn:hover{background:#1d4fd8}
+.btn.ghost{background:var(--white);color:var(--navy);border:1px solid var(--line);box-shadow:none}
+.btn.danger{background:#fff;color:var(--red);border:1px solid #f3c1c1;box-shadow:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--white);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--blue)}
+.stat span{color:var(--muted);font-size:13px}.stat b{display:block;font-size:28px;color:var(--navy);margin-top:4px}
+.stat.g{border-color:var(--green)}.stat.a{border-color:var(--amber)}.stat.r{border-color:var(--red)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.tools input,.tools select,.field input,.field select{padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--text)}
+.tools input{flex:1;min-width:220px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:var(--white);border:1px solid transparent;border-radius:16px;padding:18px;box-shadow:var(--shadow);cursor:pointer;text-align:left;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.card .nb{font-weight:700;color:var(--navy);font-size:17px;margin-bottom:6px}
+.card .cust{font-size:14px;margin-bottom:10px}
+.card .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:10px}
+.badge{font-size:12.5px;font-weight:600}
+.badge.Selesai{color:var(--green)}.badge.Proses{color:var(--blue)}.badge.Perlu{color:var(--red)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 10px;background:var(--white);border-radius:16px}
+/* Riwayat & Pengaturan */
+.panel{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:8px 18px;overflow-x:auto}
+.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.row:last-child{border:0}
+.info{padding:18px;line-height:1.7;font-size:14px;cursor:default}
+/* Drawer & Modal */
+.overlay{position:fixed;inset:0;background:rgba(11,31,63,.45);display:none;z-index:20}
+.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:-560px;width:min(520px,100%);height:100%;background:var(--white);z-index:30;padding:24px;overflow-y:auto;transition:right .25s;box-shadow:-8px 0 30px rgba(0,0,0,.15)}
+.drawer.open{right:0}
+.drawer h2{color:var(--navy);margin-bottom:14px}
+.dl{display:grid;grid-template-columns:130px 1fr;gap:10px 8px;font-size:14px;margin-bottom:20px}
+.dl dt{color:var(--muted)}.dl dd{font-weight:600;margin:0;word-break:break-word}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,94%);max-height:92vh;overflow-y:auto;background:var(--white);border-radius:18px;padding:24px;z-index:30;display:none;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal.open{display:block}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%}
+.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
+.pv{position:relative}.pv img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
+.pv button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:var(--red);color:#fff;line-height:1}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;z-index:50;display:none;font-size:14px;max-width:92%}
+.close{float:right;border:0;background:none;font-size:22px;color:var(--muted)}
+/* Responsive */
+@media(max-width:820px){
+ body{flex-direction:column}
+ .sidebar{width:100%;height:auto;position:static;padding:12px}
+ .brand{padding-bottom:10px;margin-bottom:8px}
+ .nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.nav button{margin:0}
+ main{padding:18px 14px}.stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand"><b>PT Master Artha Kharisma</b><small>Dokumentasi Unit Keluar</small></div>
+  <nav class="nav">
+    <button data-view="home" class="active">🏠 Beranda</button>
+    <button data-view="laporan">🚚 Laporan Unit Keluar</button>
+    <button data-view="riwayat">🕘 Riwayat Laporan</button>
+    <button data-view="setting">⚙ Pengaturan</button>
+  </nav>
+</aside>
+
+<main>
+  <section id="view-home">
+    <div class="top">
+      <div><h1>Dokumentasi Unit Keluar</h1><p class="sub">Kelola dokumentasi foto unit berdasarkan Nomor NB</p></div>
+      <button class="btn" id="btnNew">+ Buat Laporan Unit Keluar</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><span>Total Unit</span><b id="stTotal">0</b></div>
+      <div class="stat g"><span>Selesai</span><b id="stSelesai">0</b></div>
+      <div class="stat a"><span>Proses</span><b id="stProses">0</b></div>
+      <div class="stat r"><span>Perlu Tindak Lanjut</span><b id="stTL">0</b></div>
+    </div>
+    <div class="tools">
+      <input id="search" type="search" placeholder="Cari Nomor NB, Rangka, Mesin, atau Customer…" aria-label="Cari unit">
+      <select id="fYear" aria-label="Filter tahun"><option value="">Semua tahun</option></select>
+      <select id="fStatus" aria-label="Filter status"><option value="">Semua status</option><option>Selesai</option><option>Proses</option><option>Perlu Tindak Lanjut</option></select>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="view-riwayat" hidden>
+    <div class="top"><div><h1>Riwayat Laporan</h1><p class="sub">Laporan terbaru di atas. Klik baris untuk melihat detail.</p></div></div>
+    <div class="panel" id="history"></div>
+  </section>
+
+  <section id="view-setting" hidden>
+    <div class="top"><div><h1>Pengaturan</h1></div></div>
+    <div class="panel info" id="settingInfo"></div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawer" aria-label="Detail unit"></aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <button class="close" id="mClose" aria-label="Tutup">×</button>
+  <h2 id="mTitle" style="color:var(--navy);margin-bottom:16px">Buat Laporan Unit Keluar</h2>
+  <div class="field"><label for="fNB">Nomor NB</label><input id="fNB" placeholder="NB-001246"></div>
+  <div class="field"><label for="fRangka">Nomor Rangka</label><input id="fRangka"></div>
+  <div class="field"><label for="fMesin">Nomor Mesin</label><input id="fMesin"></div>
+  <div class="field"><label for="fCust">Nama Customer</label><input id="fCust"></div>
+  <div class="field"><label for="fStat">Status</label><select id="fStat"><option>Proses</option><option>Selesai</option><option>Perlu Tindak Lanjut</option></select></div>
+  <div class="field"><label for="fFoto">Foto unit (bisa pilih banyak)</label><input id="fFoto" type="file" accept="image/*" multiple>
+    <div class="previews" id="previews"></div></div>
+  <div class="actions"><button class="btn ghost" id="mCancel">Batal</button><button class="btn" id="mSave">Simpan</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { loadUnits, saveUnit, deleteUnit, isFirebaseReady } from "./database.js";
+
+/* ============ VGY (placeholder — isi sendiri sesuai dokumentasi resmi VGY) ============ */
+// Jangan taruh API key di file front-end yang dipublikasikan.
+// Kembalikan URL foto (string) jika berhasil.
+async function uploadToVGY(file) {
+    // TODO: VGY API integration
+}
+
+/* ============ State & helper ============ */
+let units = [];
+let files = []; // foto yang dipilih di form
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtDate = (d) => new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+const statClass = (s) => (s === "Perlu Tindak Lanjut" ? "Perlu" : s);
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.display = "none"), 3500); }
+
+/* ============ Render Beranda ============ */
+function render() {
+  const q = $("search").value.trim().toLowerCase(), yr = $("fYear").value, st = $("fStatus").value;
+  const list = units.filter((u) =>
+    (!q || [u.nomorNB, u.nomorRangka, u.nomorMesin, u.namaCustomer].some((v) => String(v || "").toLowerCase().includes(q))) &&
+    (!yr || String(u.tanggalKeluar).startsWith(yr)) && (!st || u.status === st));
+  $("stTotal").textContent = units.length;
+  $("stSelesai").textContent = units.filter((u) => u.status === "Selesai").length;
+  $("stProses").textContent = units.filter((u) => u.status === "Proses").length;
+  $("stTL").textContent = units.filter((u) => u.status === "Perlu Tindak Lanjut").length;
+  $("grid").innerHTML = list.length ? list.map((u) => `
+    <button class="card" data-nb="${esc(u.nomorNB)}">
+      <div class="nb">${esc(u.nomorNB)}</div>
+      <div class="cust">${esc(u.namaCustomer)}</div>
+      <div class="meta"><span>${fmtDate(u.tanggalKeluar)}</span><span>📷 ${(u.foto || []).length} foto</span></div>
+      <span class="badge ${statClass(u.status)}">● ${esc(u.status)}</span>
+    </button>`).join("") : `<div class="empty">Tidak ada unit yang cocok. Ubah kata kunci atau filter.</div>`;
+  // Opsi tahun
+  const years = [...new Set(units.map((u) => String(u.tanggalKeluar).slice(0, 4)))].sort().reverse();
+  $("fYear").innerHTML = `<option value="">Semua tahun</option>` + years.map((y) => `<option ${y === yr ? "selected" : ""}>${y}</option>`).join("");
+  // Riwayat
+  const sorted = [...units].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  $("history").innerHTML = sorted.map((u) => `<div class="row" data-nb="${esc(u.nomorNB)}"><span><b>${esc(u.nomorNB)}</b> · ${esc(u.namaCustomer)}</span><span>${fmtDate(u.createdAt)} · ${esc(u.dibuatOleh)}</span></div>`).join("") || `<div class="info">Belum ada laporan.</div>`;
+}
+
+/* ============ Drawer detail ============ */
+function openDetail(nb) {
+  const u = units.find((x) => x.nomorNB === nb);
+  if (!u) return toast("Unit " + nb + " tidak ditemukan.");
+  $("drawer").innerHTML = `
+    <button class="close" id="dClose" aria-label="Tutup">×</button>
+    <h2>${esc(u.nomorNB)}</h2>
+    <dl class="dl">
+      <dt>Nomor NB</dt><dd>${esc(u.nomorNB)}</dd>
+      <dt>Nomor Rangka</dt><dd>${esc(u.nomorRangka)}</dd>
+      <dt>Nomor Mesin</dt><dd>${esc(u.nomorMesin)}</dd>
+      <dt>Customer</dt><dd>${esc(u.namaCustomer)}</dd>
+      <dt>Tanggal</dt><dd>${fmtDate(u.tanggalKeluar)}</dd>
+      <dt>Status</dt><dd><span class="badge ${statClass(u.status)}">● ${esc(u.status)}</span></dd>
+      <dt>Dibuat Oleh</dt><dd>${esc(u.dibuatOleh)}</dd>
+    </dl>
+    <h3 style="margin-bottom:10px;color:var(--navy)">Foto (${(u.foto || []).length})</h3>
+    <div class="gallery">${(u.foto || []).map((f) => `<a href="${esc(f)}" target="_blank" rel="noopener"><img src="${esc(f)}" alt="Foto ${esc(u.nomorNB)}" loading="lazy"></a>`).join("") || `<p class="sub">Belum ada foto.</p>`}</div>
+    <div class="actions"><button class="btn danger" id="dDelete">Hapus laporan</button></div>`;
+  $("drawer").classList.add("open"); $("overlay").classList.add("open");
+  history.replaceState(null, "", "?nb=" + encodeURIComponent(nb));
+  $("dClose").onclick = closeAll;
+  $("dDelete").onclick = async () => {
+    if (!confirm("Hapus laporan " + nb + "?")) return;
+    await deleteUnit(u.id); units = units.filter((x) => x.id !== u.id); closeAll(); render(); toast("Laporan dihapus.");
+  };
+}
+function closeAll() {
+  ["drawer", "modal", "overlay"].forEach((id) => $(id).classList.remove("open"));
+  history.replaceState(null, "", location.pathname);
+}
+
+/* ============ Form laporan ============ */
+function renderPreviews() {
+  $("previews").innerHTML = files.map((f, i) => `<div class="pv"><img src="${URL.createObjectURL(f)}" alt="Preview ${i + 1}"><button data-rm="${i}" aria-label="Hapus foto">×</button></div>`).join("");
+}
+function openModal() {
+  ["fNB", "fRangka", "fMesin", "fCust", "fFoto"].forEach((id) => ($(id).value = ""));
+  files = []; renderPreviews();
+  $("modal").classList.add("open"); $("overlay").classList.add("open"); $("fNB").focus();
+}
+$("fFoto").onchange = (e) => { files.push(...e.target.files); e.target.value = ""; renderPreviews(); };
+$("previews").onclick = (e) => { const i = e.target.dataset.rm; if (i !== undefined) { files.splice(i, 1); renderPreviews(); } };
+
+$("mSave").onclick = async () => {
+  const nb = $("fNB").value.trim().toUpperCase(), cust = $("fCust").value.trim();
+  if (!nb || !cust) return toast("Nomor NB dan Nama Customer wajib diisi.");
+  if (units.some((u) => u.nomorNB === nb)) return toast("Nomor NB " + nb + " sudah ada.");
+  $("mSave").disabled = true; $("mSave").textContent = "Menyimpan…";
+  try {
+    const urls = [];
+    for (const f of files) { const url = await uploadToVGY(f); if (url) urls.push(url); }
+    const unit = {
+      nomorNB: nb, nomorRangka: $("fRangka").value.trim(), nomorMesin: $("fMesin").value.trim(), namaCustomer: cust,
+      tanggalKeluar: new Date().toISOString().slice(0, 10), status: $("fStat").value, dibuatOleh: "Admin", foto: urls,
+      createdAt: new Date().toISOString(),
+    };
+    unit.id = await saveUnit(unit);
+    units.unshift(unit); render(); closeAll();
+    toast(files.length && !urls.length ? "Laporan tersimpan, tetapi foto belum terupload (VGY belum diintegrasikan)." : "Laporan tersimpan.");
+  } catch (err) { console.error(err); toast("Gagal menyimpan: " + err.message); }
+  $("mSave").disabled = false; $("mSave").textContent = "Simpan";
+};
+
+/* ============ Navigasi ============ */
+function showView(v) {
+  if (v === "laporan") return openModal();
+  ["home", "riwayat", "setting"].forEach((n) => ($("view-" + n).hidden = n !== v));
+  document.querySelectorAll(".nav button").forEach((b) => b.classList.toggle("active", b.dataset.view === v));
+}
+document.querySelectorAll(".nav button").forEach((b) => (b.onclick = () => showView(b.dataset.view)));
+$("btnNew").onclick = openModal;
+$("mClose").onclick = $("mCancel").onclick = $("overlay").onclick = closeAll;
+document.addEventListener("keydown", (e) => e.key === "Escape" && closeAll());
+["search", "fYear", "fStatus"].forEach((id) => $(id).addEventListener("input", render));
+document.addEventListener("click", (e) => { const el = e.target.closest("[data-nb]"); if (el) openDetail(el.dataset.nb); });
+
+$("settingInfo").innerHTML = `<b>Database:</b> ${isFirebaseReady ? "Firebase Firestore (terhubung)" : "Mode demo — isi <code>firebaseConfig</code> di database.js untuk memakai Firestore"}<br><b>Upload foto:</b> fungsi <code>uploadToVGY()</code> di index.html masih placeholder.`;
+
+/* ============ Start ============ */
+(async () => {
+  try { units = await loadUnits(); } catch (err) { console.error(err); toast("Gagal memuat data: " + err.message); }
+  render();
+  const nb = new URLSearchParams(location.search).get("nb");
+  if (nb) openDetail(nb);
+})();
+</script>
+</body>
+</html>
