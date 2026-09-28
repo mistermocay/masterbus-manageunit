@@ -5,95 +5,111 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dokumentasi Unit Keluar – PT Master Artha Kharisma</title>
 <style>
-:root{--navy:#0b1f3f;--navy2:#13305e;--blue:#2563eb;--blue-soft:#e8f0ff;--bg:#f3f6fb;--white:#fff;--text:#14213d;--muted:#6b7a90;--line:#e2e8f2;--green:#16a34a;--amber:#d97706;--red:#dc2626;--shadow:0 4px 18px rgba(11,31,63,.08)}
+:root{
+  --navy:#071a35;--navy2:#0d2a52;--blue:#2563eb;--blue2:#3b82f6;
+  --blue-soft:#eef5ff;--bg:#f5f7fb;--white:#fff;--text:#17233b;
+  --muted:#718096;--line:#e6ebf2;--green:#16a34a;--amber:#d97706;
+  --red:#dc2626;--shadow:0 8px 28px rgba(15,35,65,.07);
+}
 *{box-sizing:border-box;margin:0}
-body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-button,input,select{font:inherit}
-button{cursor:pointer}
-:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-/* Sidebar */
-.sidebar{width:250px;background:var(--navy);color:#fff;padding:22px 14px;position:sticky;top:0;height:100vh;flex-shrink:0}
-.brand{padding:4px 10px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:16px}
-.brand b{display:block;font-size:15px}.brand small{color:#9db3d6;font-size:12px}
-.nav button{display:flex;gap:10px;width:100%;padding:11px 12px;margin-bottom:4px;border:0;border-radius:10px;background:none;color:#c8d6ee;text-align:left}
-.nav button:hover{background:var(--navy2)}
-.nav button.active{background:var(--blue);color:#fff}
-/* Main */
-main{flex:1;padding:28px;min-width:0}
-.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
-h1{font-size:26px;color:var(--navy)}
-.sub{color:var(--muted);font-size:14px;margin-top:2px}
-.btn{background:var(--blue);color:#fff;border:0;padding:11px 18px;border-radius:10px;font-weight:600;box-shadow:var(--shadow)}
-.btn:hover{background:#1d4fd8}
-.btn.ghost{background:var(--white);color:var(--navy);border:1px solid var(--line);box-shadow:none}
-.btn.danger{background:#fff;color:var(--red);border:1px solid #f3c1c1;box-shadow:none}
+html,body{min-height:100%}
+body{font-family:Inter,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* SIDEBAR */
+.sidebar{width:248px;background:linear-gradient(180deg,#071a35 0%,#0b2345 100%);color:#fff;padding:24px 14px;position:sticky;top:0;height:100vh;flex-shrink:0;display:flex;flex-direction:column}
+.brand{padding:4px 12px 24px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:18px}
+.brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:grid;place-items:center;font-weight:800;font-size:17px;margin-bottom:12px;box-shadow:0 6px 16px rgba(37,99,235,.3)}
+.brand b{display:block;font-size:14px;letter-spacing:.1px}.brand small{color:#91a8c9;font-size:11px;display:block;margin-top:3px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#6f89ae;padding:0 12px 8px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:5px;border:0;border-radius:10px;background:none;color:#b9c9df;text-align:left;font-size:13px;transition:.18s}
+.nav button .ico{width:21px;text-align:center;font-size:15px}
+.nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav button.active{background:#2563eb;color:#fff;box-shadow:0 6px 16px rgba(37,99,235,.22)}
+.side-bottom{margin-top:auto;padding:14px 10px 2px;border-top:1px solid rgba(255,255,255,.1)}
+.user-mini{display:flex;align-items:center;gap:9px}.avatar{width:34px;height:34px;border-radius:50%;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-size:12px;font-weight:800}
+.user-mini b{font-size:12px;display:block}.user-mini small{color:#8198b8;font-size:10px}
+
+/* MAIN */
+main{flex:1;padding:28px 32px;min-width:0;max-width:1600px;margin:0 auto;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.eyebrow{font-size:11px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.btn{background:var(--blue);color:#fff;border:0;padding:11px 16px;border-radius:10px;font-weight:650;box-shadow:0 6px 15px rgba(37,99,235,.2);font-size:13px}.btn:hover{background:#1d4fd8}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line);box-shadow:none}.btn.danger{background:#fff;color:var(--red);border:1px solid #f2c5c5;box-shadow:none}
+
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat{background:var(--white);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--blue)}
-.stat span{color:var(--muted);font-size:13px}.stat b{display:block;font-size:28px;color:var(--navy);margin-top:4px}
-.stat.g{border-color:var(--green)}.stat.a{border-color:var(--amber)}.stat.r{border-color:var(--red)}
-.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
-.tools input,.tools select,.field input,.field select{padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--text)}
-.tools input{flex:1;min-width:220px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.card{background:var(--white);border:1px solid transparent;border-radius:16px;padding:18px;box-shadow:var(--shadow);cursor:pointer;text-align:left;transition:border-color .15s,transform .15s}
-.card:hover{border-color:var(--blue);transform:translateY(-2px)}
-.card .nb{font-weight:700;color:var(--navy);font-size:17px;margin-bottom:6px}
-.card .cust{font-size:14px;margin-bottom:10px}
-.card .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:10px}
-.badge{font-size:12.5px;font-weight:600}
-.badge.Selesai{color:var(--green)}.badge.Proses{color:var(--blue)}.badge.Perlu{color:var(--red)}
-.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 10px;background:var(--white);border-radius:16px}
-/* Riwayat & Pengaturan */
-.panel{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:8px 18px;overflow-x:auto}
-.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
-.row:last-child{border:0}
-.info{padding:18px;line-height:1.7;font-size:14px;cursor:default}
-/* Drawer & Modal */
-.overlay{position:fixed;inset:0;background:rgba(11,31,63,.45);display:none;z-index:20}
-.overlay.open{display:block}
-.drawer{position:fixed;top:0;right:-560px;width:min(520px,100%);height:100%;background:var(--white);z-index:30;padding:24px;overflow-y:auto;transition:right .25s;box-shadow:-8px 0 30px rgba(0,0,0,.15)}
-.drawer.open{right:0}
-.drawer h2{color:var(--navy);margin-bottom:14px}
-.dl{display:grid;grid-template-columns:130px 1fr;gap:10px 8px;font-size:14px;margin-bottom:20px}
-.dl dt{color:var(--muted)}.dl dd{font-weight:600;margin:0;word-break:break-word}
-.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}
-.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,94%);max-height:92vh;overflow-y:auto;background:var(--white);border-radius:18px;padding:24px;z-index:30;display:none;box-shadow:0 20px 50px rgba(0,0,0,.25)}
-.modal.open{display:block}
-.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%}
-.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
-.pv{position:relative}.pv img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
-.pv button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:var(--red);color:#fff;line-height:1}
-.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;z-index:50;display:none;font-size:14px;max-width:92%}
-.close{float:right;border:0;background:none;font-size:22px;color:var(--muted)}
-/* Responsive */
-@media(max-width:820px){
- body{flex-direction:column}
- .sidebar{width:100%;height:auto;position:static;padding:12px}
- .brand{padding-bottom:10px;margin-bottom:8px}
- .nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.nav button{margin:0}
- main{padding:18px 14px}.stats{grid-template-columns:repeat(2,1fr)}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 17px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;right:-22px;top:-25px;width:75px;height:75px;border-radius:50%;background:var(--blue-soft)}
+.stat span{color:var(--muted);font-size:12px;position:relative;z-index:1}.stat b{display:block;font-size:26px;color:var(--navy);margin-top:5px;position:relative;z-index:1}
+.stat.g{border-top:3px solid var(--green)}.stat.a{border-top:3px solid var(--amber)}.stat.r{border-top:3px solid var(--red)}.stat:not(.g):not(.a):not(.r){border-top:3px solid var(--blue)}
+
+/* SEARCH */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:5px 0 12px}.section-head h2{font-size:15px;color:var(--navy)}.section-head span{font-size:12px;color:var(--muted)}
+.tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
+.searchbox{position:relative;flex:1;min-width:260px}.searchbox span{position:absolute;left:13px;top:10px;color:#91a0b5;font-size:14px}.tools input,.tools select,.field input,.field select{padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);font-size:13px}.searchbox input{width:100%;padding-left:36px}.tools select{min-width:130px}
+
+/* FOLDER CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;box-shadow:var(--shadow);cursor:pointer;text-align:left;transition:.18s;overflow:hidden}
+.card:hover{border-color:#b9cff5;transform:translateY(-2px);box-shadow:0 12px 28px rgba(15,35,65,.1)}
+.card-cover{height:116px;background:linear-gradient(135deg,#dbeafe,#f4f8ff);position:relative;overflow:hidden}
+.card-cover img{width:100%;height:100%;object-fit:cover}
+.card-cover .folder-icon{position:absolute;left:14px;top:14px;width:43px;height:36px;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:20px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.card-cover .photo-count{position:absolute;right:10px;bottom:10px;background:rgba(7,26,53,.78);color:#fff;padding:5px 8px;border-radius:7px;font-size:10px}
+.card-body{padding:14px}.card .nb{font-weight:750;color:var(--navy);font-size:15px;margin-bottom:5px}.card .cust{font-size:12px;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;padding-top:10px;border-top:1px solid var(--line)}
+.status-dot{font-size:11px;font-weight:650}.status-dot.Selesai{color:var(--green)}.status-dot.Proses{color:var(--blue)}.status-dot.Perlu{color:var(--red)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:55px 10px;background:#fff;border:1px dashed var(--line);border-radius:14px}
+
+/* HISTORY / SETTINGS */
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px 18px;overflow-x:auto}
+.row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px;cursor:pointer}.row:last-child{border:0}.info{padding:18px;line-height:1.7;font-size:13px;cursor:default}
+
+/* DRAWER + MODAL */
+.overlay{position:fixed;inset:0;background:rgba(7,26,53,.46);display:none;z-index:20;backdrop-filter:blur(2px)}.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:-600px;width:min(570px,100%);height:100%;background:#fff;z-index:30;padding:25px 26px;overflow-y:auto;transition:right .25s;box-shadow:-12px 0 35px rgba(0,0,0,.16)}.drawer.open{right:0}
+.drawer h2{color:var(--navy);margin-bottom:17px;font-size:21px}.drawer-head{display:flex;align-items:center;gap:10px;margin-bottom:17px}.drawer-head .folder{width:42px;height:42px;border-radius:10px;background:var(--blue-soft);display:grid;place-items:center;font-size:20px}
+.dl{display:grid;grid-template-columns:125px 1fr;gap:10px 8px;font-size:13px;margin-bottom:23px;padding:15px;background:#f8fafc;border:1px solid var(--line);border-radius:11px}.dl dt{color:var(--muted)}.dl dd{font-weight:650;margin:0;word-break:break-word}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:9px;border:1px solid var(--line);cursor:zoom-in}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,94%);max-height:92vh;overflow-y:auto;background:#fff;border-radius:16px;padding:24px;z-index:30;display:none;box-shadow:0 20px 55px rgba(0,0,0,.25)}.modal.open{display:block}
+.field{margin-bottom:13px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}.field input,.field select{width:100%}
+.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-top:10px}.pv{position:relative}.pv img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}.pv button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:var(--red);color:#fff;line-height:1}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;z-index:50;display:none;font-size:13px;max-width:92%}.close{float:right;border:0;background:none;font-size:22px;color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:900px){.sidebar{width:220px}main{padding:22px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){
+ body{display:block}.sidebar{width:100%;height:auto;position:static;padding:14px}.brand{padding-bottom:13px;margin-bottom:12px}.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.nav button{margin:0}
+ .side-bottom{display:none}main{padding:18px 14px}.stats{grid-template-columns:repeat(2,1fr);gap:9px}.stat{padding:13px}.stat b{font-size:22px}.grid{grid-template-columns:1fr}.top{margin-bottom:18px}
 }
 </style>
 </head>
 <body>
 
 <aside class="sidebar">
-  <div class="brand"><b>PT Master Artha Kharisma</b><small>Dokumentasi Unit Keluar</small></div>
+  <div class="brand">
+    <div class="brand-mark">MAK</div>
+    <b>PT Master Artha Kharisma</b>
+    <small>Unit Documentation System</small>
+  </div>
+  <div class="nav-label">Menu Utama</div>
   <nav class="nav">
-    <button data-view="home" class="active">🏠 Beranda</button>
-    <button data-view="laporan">🚚 Laporan Unit Keluar</button>
-    <button data-view="riwayat">🕘 Riwayat Laporan</button>
-    <button data-view="setting">⚙ Pengaturan</button>
+    <button data-view="home" class="active"><span class="ico">⌂</span>Beranda</button>
+    <button data-view="laporan"><span class="ico">＋</span>Buat Laporan</button>
+    <button data-view="riwayat"><span class="ico">◷</span>Riwayat Laporan</button>
+    <button data-view="setting"><span class="ico">⚙</span>Pengaturan</button>
   </nav>
+  <div class="side-bottom">
+    <div class="user-mini"><div class="avatar">AD</div><div><b>Admin</b><small>Administrator</small></div></div>
+  </div>
 </aside>
 
 <main>
   <section id="view-home">
     <div class="top">
-      <div><h1>Dokumentasi Unit Keluar</h1><p class="sub">Kelola dokumentasi foto unit berdasarkan Nomor NB</p></div>
-      <button class="btn" id="btnNew">+ Buat Laporan Unit Keluar</button>
+      <div><div class="eyebrow">Dashboard Dokumentasi</div><h1>Unit Keluar</h1><p class="sub">Akses seluruh folder dokumentasi berdasarkan Nomor NB.</p></div>
+      <button class="btn" id="btnNew">＋ Buat Laporan Unit Keluar</button>
     </div>
     <div class="stats">
       <div class="stat"><span>Total Unit</span><b id="stTotal">0</b></div>
@@ -101,8 +117,9 @@ h1{font-size:26px;color:var(--navy)}
       <div class="stat a"><span>Proses</span><b id="stProses">0</b></div>
       <div class="stat r"><span>Perlu Tindak Lanjut</span><b id="stTL">0</b></div>
     </div>
+    <div class="section-head"><h2>Folder Dokumentasi</h2><span id="folderCount">0 folder</span></div>
     <div class="tools">
-      <input id="search" type="search" placeholder="Cari Nomor NB, Rangka, Mesin, atau Customer…" aria-label="Cari unit">
+      <div class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Cari Nomor NB, Rangka, Mesin, atau Customer…" aria-label="Cari unit"></div>
       <select id="fYear" aria-label="Filter tahun"><option value="">Semua tahun</option></select>
       <select id="fStatus" aria-label="Filter status"><option value="">Semua status</option><option>Selesai</option><option>Proses</option><option>Perlu Tindak Lanjut</option></select>
     </div>
@@ -168,13 +185,22 @@ function render() {
   $("stSelesai").textContent = units.filter((u) => u.status === "Selesai").length;
   $("stProses").textContent = units.filter((u) => u.status === "Proses").length;
   $("stTL").textContent = units.filter((u) => u.status === "Perlu Tindak Lanjut").length;
-  $("grid").innerHTML = list.length ? list.map((u) => `
+  $("folderCount").textContent = `${list.length} folder`;
+  $("grid").innerHTML = list.length ? list.map((u) => {
+    const cover = (u.foto || [])[0];
+    return `
     <button class="card" data-nb="${esc(u.nomorNB)}">
-      <div class="nb">${esc(u.nomorNB)}</div>
-      <div class="cust">${esc(u.namaCustomer)}</div>
-      <div class="meta"><span>${fmtDate(u.tanggalKeluar)}</span><span>📷 ${(u.foto || []).length} foto</span></div>
-      <span class="badge ${statClass(u.status)}">● ${esc(u.status)}</span>
-    </button>`).join("") : `<div class="empty">Tidak ada unit yang cocok. Ubah kata kunci atau filter.</div>`;
+      <div class="card-cover">
+        ${cover ? `<img src="${esc(cover)}" alt="" loading="lazy">` : `<div class="folder-icon">📁</div>`}
+        <span class="photo-count">📷 ${(u.foto || []).length} foto</span>
+      </div>
+      <div class="card-body">
+        <div class="nb">${esc(u.nomorNB)}</div>
+        <div class="cust">${esc(u.namaCustomer || "Customer belum diisi")}</div>
+        <div class="meta"><span>${fmtDate(u.tanggalKeluar)}</span><span class="status-dot ${statClass(u.status)}">● ${esc(u.status)}</span></div>
+      </div>
+    </button>`;
+  }).join("") : `<div class="empty">Tidak ada folder yang cocok.<br><small>Ubah kata kunci atau filter pencarian.</small></div>`;
   // Opsi tahun
   const years = [...new Set(units.map((u) => String(u.tanggalKeluar).slice(0, 4)))].sort().reverse();
   $("fYear").innerHTML = `<option value="">Semua tahun</option>` + years.map((y) => `<option ${y === yr ? "selected" : ""}>${y}</option>`).join("");
