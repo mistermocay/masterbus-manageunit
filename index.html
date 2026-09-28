@@ -101,7 +101,7 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
     <button data-view="setting"><span class="ico">⚙</span>Pengaturan</button>
   </nav>
   <div class="side-bottom">
-    <div class="user-mini"><div class="avatar">AD</div><div><b>Admin</b><small>Administrator</small></div></div>
+    <div class="user-mini"><div class="avatar">AD</div><div><b>Pengguna</b><small>Penggunaistrator</small></div></div>
   </div>
 </aside>
 
@@ -263,7 +263,7 @@ $("mSave").onclick = async () => {
     for (const f of files) { const url = await uploadToVGY(f); if (url) urls.push(url); }
     const unit = {
       nomorNB: nb, nomorRangka: $("fRangka").value.trim(), nomorMesin: $("fMesin").value.trim(), namaCustomer: cust,
-      tanggalKeluar: new Date().toISOString().slice(0, 10), status: $("fStat").value, dibuatOleh: "Admin", foto: urls,
+      tanggalKeluar: new Date().toISOString().slice(0, 10), status: $("fStat").value, dibuatOleh: "Pengguna", foto: urls,
       createdAt: new Date().toISOString(),
     };
     unit.id = await saveUnit(unit);
