@@ -208,6 +208,13 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
   <div class="field"><label for="fPenginput">Nama Penginput</label><input id="fPenginput" placeholder="Masukkan nama penginput"></div>
   <div class="field"><label for="fStat">Status</label><select id="fStat"><option>Proses</option><option>Selesai</option><option>Perlu Tindak Lanjut</option></select></div>
   <div class="field">
+  <label for="fTanggalKeluar">Tanggal Unit Keluar</label>
+  <input id="fTanggalKeluar" type="date">
+  <small id="tanggalHint" style="display:block;margin-top:5px;color:var(--muted);font-size:11px">
+    Isi tanggal saat unit benar-benar keluar. Wajib diisi jika status Selesai.
+  </small>
+  </div>
+  <div class="field">
   <label>Foto unit</label>
 
   <div class="photo-pick-actions">
@@ -329,7 +336,17 @@ function hideUploadLoading() {
   $("uploadLoading").classList.remove("open");
 }
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const fmtDate = (d) => new Date(d).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+const fmtDate = (d) => {
+  if (!d) return "-";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "-";
+
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+};
 const statClass = (s) => (s === "Perlu Tindak Lanjut" ? "Perlu" : s);
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.display = "none"), 3500); }
 
@@ -428,7 +445,10 @@ function printUnitReport(u) {
       </div>
     `;
 
-  const reportDate = fmtDate(u.tanggalKeluar);
+  const reportDate = u.status === "Selesai" && u.tanggalKeluar
+    ? fmtDate(u.tanggalKeluar)
+    : "";
+
   const generatedDate = fmtDate(new Date());
 
   printWindow.document.open();
@@ -934,8 +954,10 @@ function openModal() {
   editingUnitId = null;
   editingUnit = null;
   editingPhotos = [];
-  ["fNB", "fRangka", "fMesin", "fCust", "fPenginput", "fFoto"].forEach((id) => ($(id).value = ""));
-  $("fStat").value = "Proses";
+["fNB", "fRangka", "fMesin", "fCust", "fPenginput", "fFoto", "fTanggalKeluar"].forEach((id) => ($(id).value = ""));
+$("fStat").value = "Proses";
+$("fTanggalKeluar").required = false;
+$("tanggalHint").textContent = "Isi tanggal saat unit benar-benar keluar. Wajib diisi jika status Selesai.";
   $("mTitle").textContent = "Buat Laporan Unit Keluar";
   $("mSave").textContent = "Simpan";
   files = [];
@@ -953,6 +975,13 @@ function openEditModal(unit) {
   $("fCust").value = unit.namaCustomer || "";
   $("fPenginput").value = unit.dibuatOleh || "";
   $("fStat").value = unit.status || "Proses";
+  $("fTanggalKeluar").value =
+  unit.status === "Selesai" ? (unit.tanggalKeluar || "") : "";
+  $("fTanggalKeluar").required = unit.status === "Selesai";
+  $("tanggalHint").textContent =
+  unit.status === "Selesai"
+    ? "Tanggal unit keluar wajib diisi untuk status Selesai."
+    : "Tanggal akan diisi saat unit benar-benar keluar.";
   // Simpan daftar foto lama yang masih terhubung dengan laporan
   editingPhotos = [...(unit.foto || [])];
   // Foto baru yang belum di-upload
@@ -971,6 +1000,16 @@ const addSelectedFiles = (e) => {
 };
 $("fFoto").onchange = addSelectedFiles;
 $("fKamera").onchange = addSelectedFiles;
+$("fStat").onchange = () => {
+  const selesai = $("fStat").value === "Selesai";
+  $("fTanggalKeluar").required = selesai;
+  $("tanggalHint").textContent = selesai
+    ? "Tanggal unit keluar wajib diisi karena status unit sudah Selesai."
+    : "Tanggal akan diisi saat unit benar-benar keluar.";
+  if (!selesai) {
+    $("fTanggalKeluar").value = "";
+  }
+};
 $("previews").onclick = (e) => {
   const newIndex = e.target.dataset.rm;
   const oldIndex = e.target.dataset.rmExisting;
@@ -993,9 +1032,14 @@ $("mSave").onclick = async () => {
   const nb = $("fNB").value.trim().toUpperCase();
   const cust = $("fCust").value.trim();
   const penginput = $("fPenginput").value.trim();
+  const status = $("fStat").value;
+  const tanggalKeluar = $("fTanggalKeluar").value;
 
   if (!nb || !cust || !penginput) {
     return toast("Nomor NB, Nama Customer, dan Nama Penginput wajib diisi.");
+  }
+  if (status === "Selesai" && !tanggalKeluar) {
+  return toast("Tanggal Unit Keluar wajib diisi jika status Selesai.");
   }
 
   // Cek nomor NB hanya untuk laporan baru
@@ -1042,7 +1086,8 @@ $("mSave").onclick = async () => {
       nomorRangka: $("fRangka").value.trim(),
       nomorMesin: $("fMesin").value.trim(),
       namaCustomer: cust,
-      status: $("fStat").value,
+      status: status,
+      tanggalKeluar: status === "Selesai" ? tanggalKeluar : "",
       dibuatOleh: penginput,
       foto: foto
     };
@@ -1065,7 +1110,6 @@ $("mSave").onclick = async () => {
       // BUAT LAPORAN BARU
       const unit = {
         ...data,
-        tanggalKeluar: new Date().toISOString().slice(0, 10),
         createdAt: new Date().toISOString()
       };
 
