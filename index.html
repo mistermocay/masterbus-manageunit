@@ -91,6 +91,79 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
   backdrop-filter:blur(7px);
   cursor:wait;
 }
+.confirm-modal{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(7,26,53,.58);
+  backdrop-filter:blur(6px);
+  padding:20px;
+}
+
+.confirm-modal.open{
+  display:flex;
+}
+
+.confirm-box{
+  width:min(420px,92%);
+  background:#fff;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 25px 70px rgba(0,0,0,.28);
+  animation:confirmIn .18s ease-out;
+}
+
+.confirm-icon{
+  width:46px;
+  height:46px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:#fef2f2;
+  color:var(--red);
+  font-size:21px;
+  margin-bottom:15px;
+}
+
+.confirm-title{
+  color:var(--navy);
+  font-size:17px;
+  font-weight:750;
+  margin-bottom:7px;
+}
+
+.confirm-text{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.confirm-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:22px;
+}
+
+.confirm-actions .btn.danger{
+  background:var(--red);
+  color:#fff;
+  border-color:var(--red);
+}
+
+@keyframes confirmIn{
+  from{
+    opacity:0;
+    transform:translateY(8px) scale(.98);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
 .upload-loading.open{
   display:flex;
 }
@@ -235,6 +308,24 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">🗑️</div>
+
+    <div class="confirm-title" id="confirmTitle">
+      Konfirmasi Penghapusan
+    </div>
+
+    <div class="confirm-text" id="confirmText">
+      Apakah Anda yakin ingin menghapus data ini?
+    </div>
+
+    <div class="confirm-actions">
+      <button class="btn ghost" id="confirmCancel">Batal</button>
+      <button class="btn danger" id="confirmOk">Hapus</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { loadUnits, saveUnit, updateUnit, deleteUnit, isFirebaseReady } from "./database.js";
@@ -349,6 +440,37 @@ const fmtDate = (d) => {
 };
 const statClass = (s) => (s === "Perlu Tindak Lanjut" ? "Perlu" : s);
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.display = "none"), 3500); }
+function confirmAction({
+  title = "Konfirmasi",
+  message = "Apakah Anda yakin?",
+  confirmText = "Hapus",
+  icon = "🗑️"
+} = {}) {
+  return new Promise((resolve) => {
+    const modal = $("confirmModal");
+    const ok = $("confirmOk");
+    const cancel = $("confirmCancel");
+
+    $("confirmTitle").textContent = title;
+    $("confirmText").textContent = message;
+    $("confirmIcon").textContent = icon;
+    ok.textContent = confirmText;
+
+    modal.classList.add("open");
+
+    const finish = (result) => {
+      modal.classList.remove("open");
+
+      ok.onclick = null;
+      cancel.onclick = null;
+
+      resolve(result);
+    };
+
+    ok.onclick = () => finish(true);
+    cancel.onclick = () => finish(false);
+  });
+}
 
 /* ============ Render Beranda ============ */
 function render() {
@@ -418,8 +540,25 @@ function openDetail(nb) {
   openEditModal(u);
   };
   $("dDelete").onclick = async () => {
-    if (!confirm("Hapus laporan " + nb + "?")) return;
-    await deleteUnit(u.id); units = units.filter((x) => x.id !== u.id); closeAll(); render(); toast("Laporan dihapus.");
+    const confirmed = await confirmAction({
+      title: "Hapus Laporan?",
+      message: `Laporan ${nb} akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.`,
+      confirmText: "Hapus Laporan",
+      icon: "🗑️"
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deleteUnit(u.id);
+      units = units.filter((x) => x.id !== u.id);
+      closeAll();
+      render();
+      toast("Laporan berhasil dihapus.");
+    } catch (err) {
+      console.error(err);
+      toast("Gagal menghapus laporan: " + err.message);
+    }
   };
 }
 function printUnitReport(u) {
@@ -928,7 +1067,7 @@ function printUnitReport(u) {
   printWindow.document.close();
 }
 function closeAll() {
-  ["drawer", "modal", "overlay"].forEach((id) => $(id).classList.remove("open"));
+  ["drawer", "modal", "overlay", "confirmModal"].forEach((id) => $(id).classList.remove("open"));
   history.replaceState(null, "", location.pathname);
 }
 
@@ -1010,7 +1149,7 @@ $("fStat").onchange = () => {
     $("fTanggalKeluar").value = "";
   }
 };
-$("previews").onclick = (e) => {
+$("previews").onclick = async (e) => {
   const newIndex = e.target.dataset.rm;
   const oldIndex = e.target.dataset.rmExisting;
   // Hapus foto baru yang belum di-upload
@@ -1022,7 +1161,16 @@ $("previews").onclick = (e) => {
   // Hapus foto lama yang sudah tersimpan
   if (oldIndex !== undefined) {
     const index = Number(oldIndex);
-    if (!confirm("Hapus foto ini dari laporan?")) return;
+
+    const confirmed = await confirmAction({
+      title: "Hapus Foto?",
+      message: "Foto ini akan dihapus dari laporan. Perubahan akan tersimpan saat Anda menekan Simpan Perubahan.",
+      confirmText: "Hapus Foto",
+      icon: "🖼️"
+    });
+
+    if (!confirmed) return;
+
     editingPhotos.splice(index, 1);
     renderPreviews();
   }
