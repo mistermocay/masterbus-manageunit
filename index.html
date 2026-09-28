@@ -386,12 +386,16 @@ function openDetail(nb) {
     <h3 style="margin-bottom:10px;color:var(--navy)">Foto (${(u.foto || []).length})</h3>
     <div class="gallery">${(u.foto || []).map((f) => `<a href="${esc(f)}" target="_blank" rel="noopener"><img src="${esc(f)}" alt="Foto ${esc(u.nomorNB)}" loading="lazy"></a>`).join("") || `<p class="sub">Belum ada foto.</p>`}</div>
     <div class="actions">
-    <button class="btn ghost" id="dEdit">✎ Edit laporan</button>
-    <button class="btn danger" id="dDelete">Hapus laporan</button>
+      <button class="btn" id="dPrint">🖨 Cetak Laporan</button>
+      <button class="btn ghost" id="dEdit">✎ Edit laporan</button>
+      <button class="btn danger" id="dDelete">Hapus laporan</button>
     </div>`;
   $("drawer").classList.add("open"); $("overlay").classList.add("open");
   history.replaceState(null, "", "?nb=" + encodeURIComponent(nb));
   $("dClose").onclick = closeAll;
+  $("dPrint").onclick = () => {
+  printUnitReport(u);
+  };
   $("dEdit").onclick = () => {
   closeAll();
   openEditModal(u);
@@ -400,6 +404,508 @@ function openDetail(nb) {
     if (!confirm("Hapus laporan " + nb + "?")) return;
     await deleteUnit(u.id); units = units.filter((x) => x.id !== u.id); closeAll(); render(); toast("Laporan dihapus.");
   };
+}
+function printUnitReport(u) {
+  const printWindow = window.open("", "_blank", "width=1000,height=800");
+
+  if (!printWindow) {
+    toast("Popup diblokir browser. Izinkan popup untuk mencetak laporan.");
+    return;
+  }
+
+  const photos = (u.foto || []).filter(Boolean);
+
+  const photoHtml = photos.length
+    ? photos.map((photo, index) => `
+        <div class="photo-item">
+          <img src="${esc(photo)}" alt="Dokumentasi ${index + 1}">
+          <div class="photo-caption">Dokumentasi ${String(index + 1).padStart(2, "0")}</div>
+        </div>
+      `).join("")
+    : `
+      <div class="no-photo">
+        Tidak ada dokumentasi foto yang tersedia.
+      </div>
+    `;
+
+  const reportDate = fmtDate(u.tanggalKeluar);
+  const generatedDate = fmtDate(new Date());
+
+  printWindow.document.open();
+
+  printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Dokumentasi - ${esc(u.nomorNB)}</title>
+
+<style>
+  @page {
+    size: A4;
+    margin: 14mm 15mm 16mm 15mm;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #17233b;
+    font-family: Arial, "Segoe UI", sans-serif;
+    font-size: 11px;
+  }
+
+  body {
+    padding: 0;
+  }
+
+  .report {
+    width: 100%;
+    max-width: 180mm;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 13px;
+    border-bottom: 2px solid #071a35;
+    margin-bottom: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .company-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #071a35;
+    letter-spacing: .2px;
+  }
+
+  .company-sub {
+    margin-top: 3px;
+    font-size: 9px;
+    color: #718096;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  .document-title {
+    text-align: right;
+  }
+
+  .document-title h1 {
+    margin: 0;
+    color: #071a35;
+    font-size: 16px;
+    letter-spacing: .3px;
+  }
+
+  .document-title p {
+    margin: 4px 0 0;
+    color: #718096;
+    font-size: 9px;
+  }
+
+  /* DOCUMENT META */
+  .document-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .meta-box {
+    border: 1px solid #dfe5ed;
+    border-radius: 7px;
+    padding: 9px 11px;
+    background: #f8fafc;
+  }
+
+  .meta-label {
+    display: block;
+    color: #718096;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 4px;
+  }
+
+  .meta-value {
+    display: block;
+    color: #071a35;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 9px;
+    color: #071a35;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+  }
+
+  .section-title:before {
+    content: "";
+    width: 4px;
+    height: 15px;
+    border-radius: 3px;
+    background: #2563eb;
+  }
+
+  /* INFORMATION TABLE */
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #dfe5ed;
+    border-radius: 7px;
+    overflow: hidden;
+  }
+
+  .info-table tr {
+    page-break-inside: avoid;
+  }
+
+  .info-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e7ebf1;
+    vertical-align: top;
+  }
+
+  .info-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .info-table td:first-child {
+    width: 32%;
+    color: #718096;
+    background: #f8fafc;
+    font-weight: 600;
+  }
+
+  .info-table td:last-child {
+    color: #17233b;
+    font-weight: 700;
+  }
+
+  .status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #ecfdf3;
+    color: #15803d;
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  /* PHOTOS */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .photo-item {
+    border: 1px solid #dfe5ed;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .photo-item img {
+    display: block;
+    width: 100%;
+    height: 82mm;
+    object-fit: contain;
+    background: #f5f7fb;
+  }
+
+  .photo-caption {
+    padding: 6px 8px;
+    border-top: 1px solid #e7ebf1;
+    color: #718096;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .no-photo {
+    padding: 25px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    text-align: center;
+    color: #718096;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 25px;
+    padding-top: 9px;
+    border-top: 1px solid #dfe5ed;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: #8a96a8;
+    font-size: 8px;
+  }
+
+  .footer strong {
+    color: #536174;
+  }
+
+  /* PRINT */
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .photo-item {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .section {
+      break-inside: auto;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="report">
+
+  <header class="header">
+
+    <div class="brand">
+      <img
+        class="brand-logo"
+        src="https://i.vgy.me/oGNauj.png"
+        alt="PT Master Artha Kharisma"
+      >
+
+      <div>
+        <div class="company-name">
+          PT MASTER ARTHA KHARISMA
+        </div>
+
+        <div class="company-sub">
+          Unit Documentation System
+        </div>
+      </div>
+    </div>
+
+    <div class="document-title">
+      <h1>LAPORAN DOKUMENTASI</h1>
+      <p>UNIT KELUAR</p>
+    </div>
+
+  </header>
+
+
+  <div class="document-meta">
+
+    <div class="meta-box">
+      <span class="meta-label">
+        Nomor Dokumen
+      </span>
+
+      <span class="meta-value">
+        ${esc(u.nomorNB)}
+      </span>
+    </div>
+
+    <div class="meta-box">
+      <span class="meta-label">
+        Tanggal Unit Keluar
+      </span>
+
+      <span class="meta-value">
+        ${esc(reportDate)}
+      </span>
+    </div>
+
+  </div>
+
+
+  <section class="section">
+
+    <div class="section-title">
+      Informasi Unit
+    </div>
+
+    <table class="info-table">
+
+      <tr>
+        <td>Nomor NB</td>
+        <td>${esc(u.nomorNB)}</td>
+      </tr>
+
+      <tr>
+        <td>Nomor Rangka</td>
+        <td>${esc(u.nomorRangka || "-")}</td>
+      </tr>
+
+      <tr>
+        <td>Nomor Mesin</td>
+        <td>${esc(u.nomorMesin || "-")}</td>
+      </tr>
+
+      <tr>
+        <td>Status</td>
+        <td>
+          <span class="status">
+            ${esc(u.status || "-")}
+          </span>
+        </td>
+      </tr>
+
+      <tr>
+        <td>Tanggal Keluar</td>
+        <td>${esc(reportDate)}</td>
+      </tr>
+
+    </table>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="section-title">
+      Informasi Customer
+    </div>
+
+    <table class="info-table">
+
+      <tr>
+        <td>Nama Customer</td>
+        <td>${esc(u.namaCustomer || "-")}</td>
+      </tr>
+
+    </table>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="section-title">
+      Informasi Penginput
+    </div>
+
+    <table class="info-table">
+
+      <tr>
+        <td>Dibuat Oleh</td>
+        <td>${esc(u.dibuatOleh || "-")}</td>
+      </tr>
+
+    </table>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="section-title">
+      Dokumentasi Foto
+    </div>
+
+    <div class="photo-grid">
+      ${photoHtml}
+    </div>
+
+  </section>
+
+
+  <footer class="footer">
+
+    <div>
+      <strong>PT MASTER ARTHA KHARISMA</strong><br>
+      Unit Documentation System
+    </div>
+
+    <div style="text-align:right">
+      Dokumen dibuat secara digital<br>
+      ${esc(generatedDate)}
+    </div>
+
+  </footer>
+
+</div>
+
+
+<script>
+  async function waitForImages() {
+    const images = Array.from(document.images);
+
+    await Promise.all(
+      images.map((img) => {
+        if (img.complete) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      })
+    );
+  }
+
+  window.addEventListener("load", async () => {
+    await waitForImages();
+
+    setTimeout(() => {
+      window.focus();
+      window.print();
+    }, 500);
+  });
+
+  window.addEventListener("afterprint", () => {
+    setTimeout(() => {
+      window.close();
+    }, 300);
+  });
+<\/script>
+
+</body>
+</html>
+  `);
+
+  printWindow.document.close();
 }
 function closeAll() {
   ["drawer", "modal", "overlay"].forEach((id) => $(id).classList.remove("open"));
