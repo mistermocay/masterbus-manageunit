@@ -66,7 +66,134 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 /* HISTORY / SETTINGS */
 .panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px 18px;overflow-x:auto}
 .row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px;cursor:pointer}.row:last-child{border:0}.info{padding:18px;line-height:1.7;font-size:13px;cursor:default}
+/* GUIDE / PANDUAN */
 
+.guide-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.guide-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.guide-number{
+  position:absolute;
+  right:18px;
+  top:15px;
+  color:#dbe7f8;
+  font-size:30px;
+  font-weight:800;
+}
+
+.guide-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:var(--blue-soft);
+  font-size:19px;
+  margin-bottom:13px;
+}
+
+.guide-card h3{
+  color:var(--navy);
+  font-size:15px;
+  margin-bottom:6px;
+}
+
+.guide-card p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+  margin-bottom:14px;
+}
+
+.guide-card ol{
+  padding-left:20px;
+  color:#526174;
+  font-size:12px;
+  line-height:1.8;
+}
+
+.guide-card li{
+  padding-left:3px;
+}
+
+.status-guide{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.status-item{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  padding:10px 11px;
+  border-radius:9px;
+  background:#f8fafc;
+}
+
+.status-item > span{
+  font-size:13px;
+  line-height:1.4;
+}
+
+.status-item b{
+  display:block;
+  font-size:12px;
+  margin-bottom:2px;
+}
+
+.status-item small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+
+.status-item.selesai > span,
+.status-item.selesai b{
+  color:var(--green);
+}
+
+.status-item.proses > span,
+.status-item.proses b{
+  color:var(--blue);
+}
+
+.status-item.tindak > span,
+.status-item.tindak b{
+  color:var(--red);
+}
+
+.guide-note{
+  margin-top:16px;
+  padding:14px 16px;
+  border:1px solid #bfdbfe;
+  background:#eff6ff;
+  border-radius:12px;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  color:#31547e;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.guide-note b{
+  color:var(--navy);
+  white-space:nowrap;
+}
 /* DRAWER + MODAL */
 .overlay{position:fixed;inset:0;background:rgba(7,26,53,.46);display:none;z-index:20;backdrop-filter:blur(2px)}.overlay.open{display:block}
 .drawer{position:fixed;top:0;right:-600px;width:min(570px,100%);height:100%;background:#fff;z-index:30;padding:25px 26px;overflow-y:auto;transition:right .25s;box-shadow:-12px 0 35px rgba(0,0,0,.16)}.drawer.open{right:0}
@@ -203,6 +330,14 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 @media(max-width:680px){
  body{display:block}.sidebar{width:100%;height:auto;position:static;padding:14px}.brand{padding-bottom:13px;margin-bottom:12px}.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.nav button{margin:0}
  .side-bottom{display:none}main{padding:18px 14px}.stats{grid-template-columns:repeat(2,1fr);gap:9px}.stat{padding:13px}.stat b{font-size:22px}.grid{grid-template-columns:1fr}.top{margin-bottom:18px}
+
+ .guide-grid{
+   grid-template-columns:1fr;
+ }
+
+ .guide-note{
+   flex-direction:column;
+ }
 }
 </style>
 </head>
@@ -222,7 +357,7 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
     <button data-view="home" class="active"><span class="ico">⌂</span>Beranda</button>
     <button data-view="laporan"><span class="ico">＋</span>Buat Laporan</button>
     <button data-view="riwayat"><span class="ico">◷</span>Riwayat Laporan</button>
-    <button data-view="setting"><span class="ico">⚙</span>Pengaturan</button>
+    <button data-view="setting"><span class="ico">?</span>Panduan Penggunaan</button>
   </nav>
   <div class="side-bottom">
     <div class="user-mini"><div class="avatar">M</div><div><b>Master</b><small>Divisi Bus</small></div></div>
@@ -255,10 +390,143 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
     <div class="panel" id="history"></div>
   </section>
 
-  <section id="view-setting" hidden>
-    <div class="top"><div><h1>Pengaturan</h1></div></div>
-    <div class="panel info" id="settingInfo"></div>
-  </section>
+<section id="view-setting" hidden>
+
+  <div class="top">
+    <div>
+      <div class="eyebrow">Panduan Sistem</div>
+      <h1>Cara Penggunaan Aplikasi</h1>
+      <p class="sub">
+        Panduan singkat untuk membuat, mengelola, dan mencetak laporan unit keluar.
+      </p>
+    </div>
+  </div>
+
+  <div class="guide-grid">
+
+    <div class="guide-card">
+      <div class="guide-number">01</div>
+      <div class="guide-icon">📝</div>
+      <h3>Membuat Laporan</h3>
+      <p>Buat dokumentasi baru untuk unit yang akan atau sudah keluar.</p>
+
+      <ol>
+        <li>Klik <b>Buat Laporan</b>.</li>
+        <li>Isi Nomor NB, Nomor Rangka, dan Nomor Mesin.</li>
+        <li>Isi Nama Customer dan Nama Penginput.</li>
+        <li>Pilih status unit.</li>
+        <li>Jika status <b>Selesai</b>, isi Tanggal Unit Keluar.</li>
+        <li>Tambahkan foto unit.</li>
+        <li>Klik <b>Simpan</b>.</li>
+      </ol>
+    </div>
+
+
+    <div class="guide-card">
+      <div class="guide-number">02</div>
+      <div class="guide-icon">🔎</div>
+      <h3>Mencari Laporan</h3>
+      <p>Temukan laporan dengan cepat melalui Beranda.</p>
+
+      <ol>
+        <li>Gunakan kolom pencarian.</li>
+        <li>Cari berdasarkan Nomor NB, Rangka, Mesin, atau Customer.</li>
+        <li>Gunakan filter tahun atau status jika diperlukan.</li>
+        <li>Klik folder untuk melihat detail laporan.</li>
+      </ol>
+    </div>
+
+
+    <div class="guide-card">
+      <div class="guide-number">03</div>
+      <div class="guide-icon">✎</div>
+      <h3>Mengedit Laporan</h3>
+      <p>Perbarui informasi atau dokumentasi foto pada laporan.</p>
+
+      <ol>
+        <li>Buka laporan yang ingin diubah.</li>
+        <li>Klik <b>Edit Laporan</b>.</li>
+        <li>Ubah informasi yang diperlukan.</li>
+        <li>Hapus foto lama atau tambahkan foto baru jika diperlukan.</li>
+        <li>Klik <b>Simpan Perubahan</b>.</li>
+      </ol>
+    </div>
+
+
+    <div class="guide-card">
+      <div class="guide-number">04</div>
+      <div class="guide-icon">🖨️</div>
+      <h3>Mencetak Laporan</h3>
+      <p>Buat dokumen laporan unit dalam format siap cetak.</p>
+
+      <ol>
+        <li>Buka detail laporan.</li>
+        <li>Klik <b>Cetak Laporan</b>.</li>
+        <li>Laporan akan dibuat dalam format A4.</li>
+        <li>Pilih printer atau <b>Save as PDF</b>.</li>
+      </ol>
+    </div>
+
+
+    <div class="guide-card">
+      <div class="guide-number">05</div>
+      <div class="guide-icon">📷</div>
+      <h3>Dokumentasi Foto</h3>
+      <p>Foto unit digunakan sebagai bagian dari dokumentasi laporan.</p>
+
+      <ol>
+        <li><b>Pilih Foto</b> untuk mengambil gambar dari perangkat.</li>
+        <li><b>Ambil Foto</b> untuk menggunakan kamera perangkat.</li>
+        <li>Foto akan diunggah otomatis saat laporan disimpan.</li>
+        <li>Foto tersimpan akan ditampilkan pada detail laporan.</li>
+      </ol>
+    </div>
+
+
+    <div class="guide-card">
+      <div class="guide-number">06</div>
+      <div class="guide-icon">📊</div>
+      <h3>Status Unit</h3>
+      <p>Gunakan status sesuai kondisi unit saat laporan dibuat.</p>
+
+      <div class="status-guide">
+        <div class="status-item selesai">
+          <span>●</span>
+          <div>
+            <b>Selesai</b>
+            <small>Unit sudah keluar dan tanggal keluar wajib diisi.</small>
+          </div>
+        </div>
+
+        <div class="status-item proses">
+          <span>●</span>
+          <div>
+            <b>Proses</b>
+            <small>Unit masih dalam proses.</small>
+          </div>
+        </div>
+
+        <div class="status-item tindak">
+          <span>●</span>
+          <div>
+            <b>Perlu Tindak Lanjut</b>
+            <small>Unit membutuhkan tindakan atau penyelesaian lebih lanjut.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="guide-note">
+    <b>💡 Tips</b>
+    <span>
+      Pastikan Nomor NB, Nomor Rangka, Nomor Mesin, Customer, dan dokumentasi foto
+      sudah benar sebelum menyimpan laporan.
+    </span>
+  </div>
+
+</section>
 </main>
 
 <div class="overlay" id="overlay"></div>
@@ -1299,8 +1567,6 @@ $("mClose").onclick = $("mCancel").onclick = $("overlay").onclick = closeAll;
 document.addEventListener("keydown", (e) => e.key === "Escape" && closeAll());
 ["search", "fYear", "fStatus"].forEach((id) => $(id).addEventListener("input", render));
 document.addEventListener("click", (e) => { const el = e.target.closest("[data-nb]"); if (el) openDetail(el.dataset.nb); });
-
-$("settingInfo").innerHTML = `<b>Database:</b> ${isFirebaseReady ? "Firebase Firestore (terhubung)" : "Mode demo — isi <code>firebaseConfig</code> di database.js untuk memakai Firestore"}<br><b>Upload foto:</b> VGY aktif dan digunakan untuk menyimpan foto unit.`;
 
 /* ============ Start ============ */
 (async () => {
