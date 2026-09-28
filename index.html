@@ -151,6 +151,7 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
   <div class="field"><label for="fRangka">Nomor Rangka</label><input id="fRangka"></div>
   <div class="field"><label for="fMesin">Nomor Mesin</label><input id="fMesin"></div>
   <div class="field"><label for="fCust">Nama Customer</label><input id="fCust"></div>
+  <div class="field"><label for="fPenginput">Nama Penginput</label><input id="fPenginput" placeholder="Masukkan nama penginput"></div>
   <div class="field"><label for="fStat">Status</label><select id="fStat"><option>Proses</option><option>Selesai</option><option>Perlu Tindak Lanjut</option></select></div>
   <div class="field"><label for="fFoto">Foto unit (bisa pilih banyak)</label><input id="fFoto" type="file" accept="image/*" multiple>
     <div class="previews" id="previews"></div></div>
@@ -249,7 +250,7 @@ function renderPreviews() {
   $("previews").innerHTML = files.map((f, i) => `<div class="pv"><img src="${URL.createObjectURL(f)}" alt="Preview ${i + 1}"><button data-rm="${i}" aria-label="Hapus foto">×</button></div>`).join("");
 }
 function openModal() {
-  ["fNB", "fRangka", "fMesin", "fCust", "fFoto"].forEach((id) => ($(id).value = ""));
+  ["fNB", "fRangka", "fMesin", "fCust", "fPenginput", "fFoto"].forEach((id) => ($(id).value = ""));
   files = []; renderPreviews();
   $("modal").classList.add("open"); $("overlay").classList.add("open"); $("fNB").focus();
 }
@@ -257,8 +258,8 @@ $("fFoto").onchange = (e) => { files.push(...e.target.files); e.target.value = "
 $("previews").onclick = (e) => { const i = e.target.dataset.rm; if (i !== undefined) { files.splice(i, 1); renderPreviews(); } };
 
 $("mSave").onclick = async () => {
-  const nb = $("fNB").value.trim().toUpperCase(), cust = $("fCust").value.trim();
-  if (!nb || !cust) return toast("Nomor NB dan Nama Customer wajib diisi.");
+const nb = $("fNB").value.trim().toUpperCase(), cust = $("fCust").value.trim(), penginput = $("fPenginput").value.trim();
+if (!nb || !cust || !penginput) return toast("Nomor NB, Nama Customer, dan Nama Penginput wajib diisi.");
   if (units.some((u) => u.nomorNB === nb)) return toast("Nomor NB " + nb + " sudah ada.");
   $("mSave").disabled = true; $("mSave").textContent = "Menyimpan…";
   try {
@@ -266,7 +267,7 @@ $("mSave").onclick = async () => {
     for (const f of files) { const url = await uploadToVGY(f); if (url) urls.push(url); }
     const unit = {
       nomorNB: nb, nomorRangka: $("fRangka").value.trim(), nomorMesin: $("fMesin").value.trim(), namaCustomer: cust,
-      tanggalKeluar: new Date().toISOString().slice(0, 10), status: $("fStat").value, dibuatOleh: "Pengguna", foto: urls,
+      tanggalKeluar: new Date().toISOString().slice(0, 10), status: $("fStat").value, dibuatOleh: penginput, foto: urls,
       createdAt: new Date().toISOString(),
     };
     unit.id = await saveUnit(unit);
