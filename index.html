@@ -819,7 +819,7 @@ function openDetail(nb) {
       <dt>Nomor WP</dt><dd>${esc(u.nomorWP || "-")}</dd>
       <dt>Tanggal</dt><dd>${fmtDate(u.tanggalKeluar)}</dd>
       <dt>Status</dt><dd><span class="badge ${statClass(u.status)}">● ${esc(u.status)}</span></dd>
-      <dt>Dibuat Oleh</dt><dd>${esc(u.dibuatOleh)}</dd>
+      <dt>Pelapor</dt><dd>${esc(u.dibuatOleh)}</dd>
     </dl>
     <h3 style="margin-bottom:10px;color:var(--navy)">Foto (${(u.foto || []).length})</h3>
     <div class="gallery">${(u.foto || []).map((f) => `<a href="${esc(f)}" target="_blank" rel="noopener"><img src="${esc(f)}" alt="Foto ${esc(u.nomorNB)}" loading="lazy"></a>`).join("") || `<p class="sub">Belum ada foto.</p>`}</div>
@@ -1294,7 +1294,7 @@ function printUnitReport(u) {
     <table class="info-table">
 
       <tr>
-        <td>Dibuat Oleh</td>
+        <td>Pelapor</td>
         <td>${esc(u.dibuatOleh || "-")}</td>
       </tr>
 
