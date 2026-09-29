@@ -542,11 +542,40 @@ h1{font-size:25px;color:var(--navy);letter-spacing:-.5px}.sub{color:var(--muted)
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <button class="close" id="mClose" aria-label="Tutup">×</button>
   <h2 id="mTitle" style="color:var(--navy);margin-bottom:16px">Buat Laporan Unit Keluar</h2>
-  <div class="field"><label for="fNB">Nomor NB</label><input id="fNB" placeholder="NB-001246"></div>
-  <div class="field"><label for="fRangka">Nomor Rangka</label><input id="fRangka"></div>
-  <div class="field"><label for="fMesin">Nomor Mesin</label><input id="fMesin"></div>
-  <div class="field"><label for="fCust">Nama Customer</label><input id="fCust"></div>
-  <div class="field"><label for="fPenginput">Nama Penginput</label><input id="fPenginput" placeholder="Masukkan nama penginput"></div>
+  <div class="field">
+  <label for="fNB">Nomor NB <span style="color:var(--red)">*</span></label>
+  <input id="fNB" placeholder="NB-001246" required>
+</div>
+
+<div class="field">
+  <label for="fRangka">Nomor Rangka <span style="color:var(--red)">*</span></label>
+  <input id="fRangka" required>
+</div>
+
+<div class="field">
+  <label for="fMesin">Nomor Mesin <span style="color:var(--red)">*</span></label>
+  <input id="fMesin" required>
+</div>
+
+<div class="field">
+  <label for="fCust">Nama Customer <span style="color:var(--red)">*</span></label>
+  <input id="fCust" required>
+</div>
+
+<div class="field">
+  <label for="fPenginput">Nama Penginput <span style="color:var(--red)">*</span></label>
+  <input id="fPenginput" placeholder="Masukkan nama penginput" required>
+</div>
+
+<div class="field">
+  <label for="fSO">Nomor SO</label>
+  <input id="fSO" placeholder="Opsional">
+</div>
+
+<div class="field">
+  <label for="fWP">Nomor WP</label>
+  <input id="fWP" placeholder="Opsional">
+</div>
   <div class="field"><label for="fStat">Status</label><select id="fStat"><option>Proses</option><option>Selesai</option><option>Perlu Tindak Lanjut</option></select></div>
   <div class="field">
   <label for="fTanggalKeluar">Tanggal Unit Keluar</label>
@@ -786,6 +815,8 @@ function openDetail(nb) {
       <dt>Nomor Rangka</dt><dd>${esc(u.nomorRangka)}</dd>
       <dt>Nomor Mesin</dt><dd>${esc(u.nomorMesin)}</dd>
       <dt>Customer</dt><dd>${esc(u.namaCustomer)}</dd>
+      <dt>Nomor SO</dt><dd>${esc(u.nomorSO || "-")}</dd>
+      <dt>Nomor WP</dt><dd>${esc(u.nomorWP || "-")}</dd>
       <dt>Tanggal</dt><dd>${fmtDate(u.tanggalKeluar)}</dd>
       <dt>Status</dt><dd><span class="badge ${statClass(u.status)}">● ${esc(u.status)}</span></dd>
       <dt>Dibuat Oleh</dt><dd>${esc(u.dibuatOleh)}</dd>
@@ -1208,7 +1239,15 @@ function printUnitReport(u) {
         <td>Nomor Mesin</td>
         <td>${esc(u.nomorMesin || "-")}</td>
       </tr>
+      <tr>
+      <td>Nomor SO</td>
+      <td>${esc(u.nomorSO || "-")}</td>
+    </tr>
 
+    <tr>
+      <td>Nomor WP</td>
+      <td>${esc(u.nomorWP || "-")}</td>
+    </tr>
       <tr>
         <td>Status</td>
         <td>
@@ -1362,7 +1401,17 @@ function openModal() {
   editingUnitId = null;
   editingUnit = null;
   editingPhotos = [];
-["fNB", "fRangka", "fMesin", "fCust", "fPenginput", "fFoto", "fTanggalKeluar"].forEach((id) => ($(id).value = ""));
+[
+  "fNB",
+  "fRangka",
+  "fMesin",
+  "fCust",
+  "fPenginput",
+  "fSO",
+  "fWP",
+  "fFoto",
+  "fTanggalKeluar"
+].forEach((id) => ($(id).value = ""));
 $("fStat").value = "Proses";
 $("fTanggalKeluar").required = false;
 $("tanggalHint").textContent = "Isi tanggal saat unit benar-benar keluar. Wajib diisi jika status Selesai.";
@@ -1382,6 +1431,8 @@ function openEditModal(unit) {
   $("fMesin").value = unit.nomorMesin || "";
   $("fCust").value = unit.namaCustomer || "";
   $("fPenginput").value = unit.dibuatOleh || "";
+  $("fSO").value = unit.nomorSO || "";
+  $("fWP").value = unit.nomorWP || "";
   $("fStat").value = unit.status || "Proses";
   $("fTanggalKeluar").value =
   unit.status === "Selesai" ? (unit.tanggalKeluar || "") : "";
@@ -1447,14 +1498,41 @@ $("previews").onclick = async (e) => {
 
 $("mSave").onclick = async () => {
   const nb = $("fNB").value.trim().toUpperCase();
+  const rangka = $("fRangka").value.trim();
+  const mesin = $("fMesin").value.trim();
   const cust = $("fCust").value.trim();
   const penginput = $("fPenginput").value.trim();
+
+  const nomorSO = $("fSO").value.trim();
+  const nomorWP = $("fWP").value.trim();
+
   const status = $("fStat").value;
   const tanggalKeluar = $("fTanggalKeluar").value;
 
-  if (!nb || !cust || !penginput) {
-    return toast("Nomor NB, Nama Customer, dan Nama Penginput wajib diisi.");
+  if (!nb) {
+    $("fNB").focus();
+    return toast("Nomor NB wajib diisi.");
   }
+
+  if (!rangka) {
+    $("fRangka").focus();
+    return toast("Nomor Rangka wajib diisi.");
+  }
+
+  if (!mesin) {
+    $("fMesin").focus();
+    return toast("Nomor Mesin wajib diisi.");
+  }
+
+  if (!cust) {
+    $("fCust").focus();
+    return toast("Nama Customer wajib diisi.");
+  }
+
+  if (!penginput) {
+    $("fPenginput").focus();
+    return toast("Nama Penginput wajib diisi.");
+}
   if (status === "Selesai" && !tanggalKeluar) {
   return toast("Tanggal Unit Keluar wajib diisi jika status Selesai.");
   }
@@ -1499,15 +1577,17 @@ $("mSave").onclick = async () => {
     }
 
     const data = {
-      nomorNB: nb,
-      nomorRangka: $("fRangka").value.trim(),
-      nomorMesin: $("fMesin").value.trim(),
-      namaCustomer: cust,
-      status: status,
-      tanggalKeluar: status === "Selesai" ? tanggalKeluar : "",
-      dibuatOleh: penginput,
-      foto: foto
-    };
+    nomorNB: nb,
+    nomorRangka: rangka,
+    nomorMesin: mesin,
+    namaCustomer: cust,
+    nomorSO: nomorSO,
+    nomorWP: nomorWP,
+    status: status,
+    tanggalKeluar: status === "Selesai" ? tanggalKeluar : "",
+    dibuatOleh: penginput,
+    foto: foto
+  };
 
     if (editingUnitId) {
       // UPDATE LAPORAN LAMA
